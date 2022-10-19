@@ -1,8 +1,16 @@
 #!/bin/bash
 
-memory_check=$(free | awk '/Mem/{printf("RAM Usage: %.2f%\n"), $3/$2*100}' |  awk '{print $3}' | cut -d"." -f1)
-if [ $memory_check -c 90 -w 60 ]; then
-echo "Current Memory Usage: $memory_check%" | mail -e email@mine.com 
+echo "RAM Usage: "
+read memory_check
+echo "Current Memory Usage: $memory_check"
+
+if [ $memory_check -lt 90  ]; then
+echo "Warning Threshold: $memory_check"  | echo mail -s "Warning Threshold" email@mine.com
+echo 'Exit Value: 1'
+elif [ $memory_check -gt 89 ]; then
+echo "Critical Threshold: $memory_check"  | echo mail -s "Critical Threshold" email@mine.com
+echo 'Exit Value: 2'
 else
 echo "Memory usage is in under threshold"
+echo 'Exit Value: 0'
 fi
